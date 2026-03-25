@@ -460,6 +460,30 @@
             margin-bottom: 2rem; 
             position: relative;
             display: inline-block;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+
+        .mascot-container:hover {
+            transform: scale(1.15);
+        }
+
+        /* Bubble Particle Effect */
+        .bubble-particle {
+            position: fixed;
+            pointer-events: none;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.8), rgba(96, 165, 250, 0.4));
+            box-shadow: inset 0 0 4px rgba(255, 255, 255, 0.6);
+            transform: translate(-50%, -50%) scale(0.5);
+            animation: bubbleRise 1.2s ease-out forwards;
+            z-index: 1;
+        }
+
+        @keyframes bubbleRise {
+            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0.8; }
+            50% { opacity: 1; }
+            100% { transform: translate(calc(-50% + var(--drift, 0px)), -100px) scale(1.2); opacity: 0; }
         }
 
         .mascot-container::before {
@@ -1334,6 +1358,37 @@
 
         // Initialize on load
         window.app.init();
+    </script>
+    <script>
+        // Interactive Bubble Background Effect
+        let lastBubbleTime = 0;
+        document.addEventListener('mousemove', function(e) {
+            const now = Date.now();
+            if (now - lastBubbleTime < 40) return; // throttle
+            
+            if (Math.random() > 0.8) return; // occasional skip for organic feel
+            
+            lastBubbleTime = now;
+            
+            const bubble = document.createElement('div');
+            bubble.className = 'bubble-particle';
+            
+            const size = Math.random() * 12 + 4; // 4px to 16px
+            bubble.style.width = size + 'px';
+            bubble.style.height = size + 'px';
+            bubble.style.left = e.clientX + 'px';
+            bubble.style.top = e.clientY + 'px';
+            
+            // Random horizontal drift
+            const drift = (Math.random() - 0.5) * 60;
+            bubble.style.setProperty('--drift', drift + 'px');
+            
+            document.body.appendChild(bubble);
+            
+            setTimeout(() => {
+                if(bubble.parentNode) bubble.remove();
+            }, 1200);
+        });
     </script>
 </body>
 </html>
