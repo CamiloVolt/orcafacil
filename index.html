@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OrcaFácil</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --radius-lg: 16px;
+            --radius-md: 8px;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+            --transition: all 0.3s ease;
+        }
+        
+        body.dark {
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.15);
+        }
+
+        body.dark .form-control {
+            background-color: var(--bg);
+            color: var(--text-main);
+        }
+
+        body.dark .pix-box {
+            background: #022c22;
+            border-color: #064e3b;
+        }
+
+        body.dark .pix-box h4 {
+            color: #34d399;
+        }
+
+        body.dark .pix-copy-group input {
+            background: #0f172a;
+            color: #cbd5e1;
+        }
+
+        body.dark .btn-outline {
+            color: var(--text-main);
+            border-color: var(--border);
+        }
+        
+        body.dark .btn-outline:hover {
+            background-color: var(--border);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 2rem auto;
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background-color: var(--primary);
+            color: white;
+            padding: 1.5rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background-color var(--transition);
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-brand img {
+            max-height: 48px;
+            border-radius: var(--radius-md);
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px;
+            display: none;
+            object-fit: contain;
+        }
+
+        .header-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .icon-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            font-size: 1.25rem;
+        }
+
+        .icon-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .content {
+            padding: 2rem;
+            flex: 1;
+        }
+
+        .screen {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-main);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            color: var(--text-main);
+            background: var(--surface);
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 20%, transparent);
+        }
+
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+            padding: 0.875rem 1.5rem;
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: var(--transition);
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-main);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--bg);
+        }
+
+        .btn-success {
+            background-color: #10b981;
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2);
+        }
+
+        .btn-success:hover {
+            background-color: #059669;
+            transform: translateY(-1px);
+        }
+
+        /* Services Section */
+        .services-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            border-top: 1px dashed var(--border);
+            padding-top: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .services-header h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            width: auto;
+        }
+
+        .service-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .service-item {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            background: var(--bg);
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+        }
+
+        .service-inputs {
+            display: flex;
+            gap: 0.75rem;
+            flex: 1;
+        }
+
+        .s-desc { flex: 2; }
+        .s-price { flex: 1; min-width: 100px; }
+
+        .btn-remove {
+            background: transparent;
+            color: #ef4444;
+            border: none;
+            padding: 0.5rem;
+            cursor: pointer;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .btn-remove:hover {
+            background: #fee2e2;
+        }
+
+        /* Summary */
+        .summary-box {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .summary-client {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px dashed var(--border);
+        }
+
+        .summary-client p {
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+            color: var(--text-main);
+        }
+        .summary-client p strong {
+            color: var(--text-muted);
+            margin-right: 0.5rem;
+            font-weight: 500;
+        }
+
+        .summary-items {
+            margin-bottom: 1.5rem;
+        }
+
+        .s-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            font-size: 0.95rem;
+        }
+
+        .s-item:not(:last-child) {
+            border-bottom: 1px solid var(--border);
+        }
+
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 2px solid var(--border);
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .summary-notes {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: var(--radius-md);
+            font-size: 0.9rem;
+            color: var(--text-main);
+            font-style: italic;
+        }
+
+        /* Pix Section */
+        .pix-box {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: var(--radius-md);
+            text-align: center;
+        }
+        
+        .pix-box h4 {
+            color: #166534;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .pix-qr {
+            width: 180px;
+            height: 180px;
+            margin: 0 auto 1rem;
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .pix-qr img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .pix-copy-group {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .pix-copy-group input {
+            flex: 1;
+            font-family: monospace;
+            font-size: 0.85rem;
+            background: white;
+            padding: 0.5rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            color: var(--text-muted);
+        }
+
+        /* Login Screen */
+        .login-wrapper {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #0f172a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            padding: 1rem;
+        }
+
+        .login-card {
+            background-color: #1e293b;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 400px;
+            padding: 2.5rem 2rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            color: #f8fafc;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(-3deg); }
+            50% { transform: translateY(-15px) rotate(3deg); }
+            100% { transform: translateY(0px) rotate(-3deg); }
+        }
+
+        .mascot-container { 
+            margin-bottom: 2rem; 
+            position: relative;
+            display: inline-block;
+        }
+
+        .mascot-container::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 160px;
+            height: 160px;
+            background: radial-gradient(circle, rgba(96, 165, 250, 0.4) 0%, transparent 60%);
+            animation: float-shadow 4s ease-in-out infinite;
+            z-index: 0;
+            border-radius: 50%;
+        }
+
+        @keyframes float-shadow {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+            50% { transform: translate(-50%, -50%) scale(0.85); opacity: 0.4; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+        }
+
+        .mascot-svg {
+            width: 130px; height: auto;
+            animation: float 4s ease-in-out infinite;
+            filter: drop-shadow(0 10px 8px rgba(0,0,0,0.3));
+            position: relative;
+            z-index: 1;
+        }
+
+        .login-title {
+            font-size: 1.75rem; font-weight: 700;
+            margin-top: 1rem; color: #f8fafc;
+            letter-spacing: -0.5px;
+        }
+
+        .login-btn-google {
+            background: white; color: #334155;
+            border: 1px solid #e2e8f0; display: flex;
+            align-items: center; justify-content: center;
+            gap: 0.75rem; width: 100%; padding: 0.875rem;
+            border-radius: 12px; font-weight: 600; font-size: 1rem;
+            cursor: pointer; transition: all 0.2s; margin-bottom: 1.5rem;
+        }
+
+        .login-btn-google:hover {
+            background: #f8fafc; transform: translateY(-2px);
+        }
+
+        .login-separator {
+            display: flex; align-items: center; text-align: center;
+            color: #64748b; margin: 1.5rem 0; font-size: 0.85rem;
+        }
+        .login-separator::before, .login-separator::after {
+            content: ''; flex: 1; border-bottom: 1px solid #334155;
+        }
+        .login-separator:not(:empty)::before { margin-right: .5em; }
+        .login-separator:not(:empty)::after { margin-left: .5em; }
+
+        .login-input {
+            width: 100%; background: #0f172a; border: 1px solid #334155;
+            color: white; padding: 0.875rem; border-radius: 12px;
+            font-size: 1rem; margin-bottom: 1rem; transition: all 0.2s;
+        }
+
+        .login-input:focus {
+            outline: none; border-color: #60a5fa;
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
+        }
+
+        .login-btn-blue {
+            background: #60a5fa; color: #0f172a; width: 100%;
+            padding: 0.875rem; border-radius: 12px; font-weight: 700;
+            font-size: 1rem; border: none; cursor: pointer; transition: all 0.2s;
+        }
+
+        .login-btn-blue:hover {
+            background: #3b82f6; transform: translateY(-2px);
+        }
+
+        .login-footer {
+            margin-top: 2rem; font-size: 0.85rem; color: #64748b;
+        }
+
+        /* Color Picker & Logo Upload */
+        .config-row {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .color-picker-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        input[type="color"] {
+            -webkit-appearance: none;
+            appearance: none;
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            cursor: pointer;
+            padding: 0;
+            overflow: hidden;
+            border: 2px solid var(--border);
+            background: transparent;
+        }
+
+        input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+        input[type="color"]::-webkit-color-swatch { border: none; }
+
+        .logo-preview {
+            width: 80px;
+            height: 80px;
+            border: 1px dashed var(--border);
+            border-radius: var(--radius-md);
+            object-fit: contain;
+            display: none;
+            margin-top: 0.5rem;
+            background: var(--bg);
+        }
+
+        .actions-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .container {
+                margin: 0;
+                border-radius: 0;
+                min-height: 100vh;
+            }
+            .service-inputs {
+                flex-direction: column;
+            }
+            .actions-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="login-wrapper" class="login-wrapper" style="display: none;">
+        <div class="login-card">
+            <div class="mascot-container">                <svg class="mascot-svg" viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Tail -->
+                    <path d="M 10,50 Q 0,35 15,45 Q 0,65 10,50 Z" fill="#1a1a2e"/>
+                    <!-- Main Body (Black) -->
+                    <path d="M 15,50 Q 30,20 80,30 Q 110,40 100,60 Q 80,80 30,70 Q 15,65 15,50 Z" fill="#1a1a2e"/>
+                    <!-- Belly (White) -->
+                    <path d="M 35,62 Q 60,80 95,55 Q 80,70 35,62 Z" fill="#ffffff"/>
+                    <!-- Eye Patch Spot (White) -->
+                    <path d="M 75,35 Q 85,25 95,30 Q 85,40 75,35 Z" fill="#ffffff"/>
+                    <!-- Fin Dorsal -->
+                    <path d="M 50,30 Q 60,5 65,30 Z" fill="#1a1a2e"/>
+                    <!-- Flipper -->
+                    <path d="M 60,65 Q 50,85 70,70 Z" fill="#1a1a2e"/>
+                    
+                    <!-- Eye (White eye with Black Pupil) -->
+                    <circle cx="82" cy="45" r="4" fill="#ffffff"/>
+                    <circle cx="83" cy="45" r="2" fill="#1a1a2e"/>
+                    
+                    <!-- Smile (Happy) -->
+                    <path d="M 90,54 Q 95,59 102,53" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                <div class="login-title">OrcaFácil</div>
+            </div>
+
+            <button class="login-btn-google" onclick="app.loginGoogle()">
+                <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+                Continuar com Google
+            </button>
+
+            <div class="login-separator">ou</div>
+
+            <div id="login-phone-step">
+                <input type="tel" id="login_phone" class="login-input" placeholder="+55 11 99999-9999">
+                <div id="recaptcha-container" style="margin-bottom: 1rem;"></div>
+                <button class="login-btn-blue" onclick="app.sendSMS()">Enviar código SMS</button>
+            </div>
+
+            <div id="login-otp-step" style="display: none;">
+                <p style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 0.5rem;">CÓDIGO SMS</p>
+                <input type="text" id="login_otp" class="login-input" placeholder="000000" maxlength="6" style="text-align: center; font-size: 1.5rem; letter-spacing: 0.5rem;">
+                <button class="login-btn-blue" onclick="app.verifyOTP()">Verificar e entrar</button>
+                <button onclick="app.resetLogin()" style="background:none; border:none; color: #64748b; font-size: 0.85rem; margin-top: 1rem; cursor: pointer;">Voltar</button>
+            </div>
+
+            <div class="login-footer">
+                Grátis para sempre ❤️ — seus dados ficam seguros
+            </div>
+        </div>
+    </div>
+
+    <div id="app-wrapper" style="width: 100%; display: none; justify-content: center;">
+        <div class="container">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-brand">
+                    <img id="app-logo" src="" alt="Logo">
+                    <span class="header-title" id="app-name">OrcaFácil</span>
+                </div>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button class="icon-btn" onclick="app.toggleTheme()" title="Modo Escuro">
+                        <i id="theme-icon" class="ph ph-moon"></i>
+                    </button>
+                    <button class="icon-btn" onclick="app.showScreen('config')" title="Configurações">
+                        <i class="ph ph-gear"></i>
+                    </button>
+                    <button class="icon-btn" onclick="app.logout()" title="Sair">
+                        <i class="ph ph-sign-out"></i>
+                    </button>
+                </div>
+            </header>
+
+        <div class="content">
+            <!-- 1. Config Screen -->
+            <div id="screen-config" class="screen">
+                <h2>Configuração Inicial</h2>
+                <p class="subtitle">Cadastre os dados da sua empresa para começar.</p>
+
+                <div class="form-group">
+                    <label for="c_name">Nome da Empresa</label>
+                    <input type="text" id="c_name" class="form-control" placeholder="Ex: Minha Agência Digital" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="c_whatsapp">WhatsApp da Empresa</label>
+                    <input type="tel" id="c_whatsapp" class="form-control" placeholder="Ex: 11999999999" required>
+                    <small style="color: var(--text-muted); margin-top: 0.25rem; display: block;">Apenas números. Onde você receberá os orçamentos.</small>
+                </div>
+
+                <div class="config-row">
+                    <div class="form-group" style="flex: 1;">
+                        <label for="c_color">Cor Principal da Marca</label>
+                        <div class="color-picker-wrapper">
+                            <input type="color" id="c_color" value="#2563eb">
+                            <span id="c_color_hex" style="font-size: 0.9rem; font-family: monospace;">#2563eb</span>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 style="margin: 1.5rem 0 1rem; font-size: 1.1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;">Dados para Recebimento (PIX) - Opcional</h3>
+                
+                <div class="form-group">
+                    <label for="c_pix_key">Chave PIX</label>
+                    <input type="text" id="c_pix_key" class="form-control" placeholder="CNPJ, CPF, Celular, Email ou Aleatória">
+                </div>
+                
+                <div class="config-row">
+                    <div class="form-group" style="flex: 1;">
+                        <label for="c_pix_name">Nome do Titular do PIX</label>
+                        <input type="text" id="c_pix_name" class="form-control" placeholder="Sem acentos (Ex: Joao Silva)">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label for="c_pix_city">Cidade</label>
+                        <input type="text" id="c_pix_city" class="form-control" placeholder="Ex: Sao Paulo">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="c_logo">Logo da Empresa (Opcional)</label>
+                    <input type="file" id="c_logo" class="form-control" accept="image/*">
+                    <img id="c_logo_preview" class="logo-preview">
+                </div>
+
+                <button class="btn btn-primary" onclick="app.saveConfig()" style="margin-top: 1rem;">
+                    Salvar e Continuar <i class="ph ph-arrow-right"></i>
+                </button>
+            </div>
+
+            <!-- 2. Quote Screen -->
+            <div id="screen-quote" class="screen">
+                <h2>Novo Orçamento</h2>
+                <p class="subtitle">Preencha os dados do cliente e os serviços desejados.</p>
+
+                <div class="form-group">
+                    <label for="q_name">Nome do Cliente</label>
+                    <input type="text" id="q_name" class="form-control" placeholder="Ex: João Silva" required>
+                </div>
+
+                <div class="config-row">
+                    <div class="form-group" style="flex: 1;">
+                        <label for="q_whatsapp">WhatsApp (Opcional)</label>
+                        <input type="tel" id="q_whatsapp" class="form-control" placeholder="(11) 99999-9999">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label for="q_email">Email (Opcional)</label>
+                        <input type="email" id="q_email" class="form-control" placeholder="joao@email.com">
+                    </div>
+                </div>
+
+                <div class="services-header">
+                    <h3>Serviços</h4>
+                    <button class="btn btn-outline btn-sm" onclick="app.addServiceItem()">
+                        <i class="ph ph-plus"></i> Adicionar Item
+                    </button>
+                </div>
+
+                <div id="service-list" class="service-list">
+                    <!-- Dynamic Items Here -->
+                </div>
+
+                <div class="form-group">
+                    <label for="q_notes">Observações Adicionais (Opcional)</label>
+                    <textarea id="q_notes" class="form-control" placeholder="Detalhes do projeto, prazo desejado, etc..."></textarea>
+                </div>
+
+                <button class="btn btn-primary" onclick="app.generateSummary()" style="margin-top: 1rem;">
+                    Gerar Resumo <i class="ph ph-calculator"></i>
+                </button>
+            </div>
+
+            <!-- 3. Summary Screen -->
+            <div id="screen-summary" class="screen">
+                <h2>Resumo do Orçamento</h2>
+                <p class="subtitle">Revise o orçamento antes de enviar.</p>
+
+                <div class="summary-box">
+                    <div class="summary-client">
+                        <p><strong>Cliente:</strong> <span id="sum_name"></span></p>
+                        <p><strong>WhatsApp:</strong> <span id="sum_whatsapp"></span></p>
+                        <p><strong>E-mail:</strong> <span id="sum_email"></span></p>
+                    </div>
+                    
+                    <div class="summary-items" id="sum_items">
+                        <!-- Dynamic Info Here -->
+                    </div>
+
+                    <div class="summary-total">
+                        <span>Total Gasto Estimado</span>
+                        <span id="sum_total">R$ 0,00</span>
+                    </div>
+
+                    <div id="sum_notes_container" class="summary-notes" style="display: none;">
+                        <strong>Observações:</strong><br>
+                        <span id="sum_notes"></span>
+                    </div>
+
+                    <!-- PIX Area -->
+                    <div id="sum_pix_container" class="pix-box" style="display: none;">
+                        <h4><i class="ph ph-qr-code"></i> Pagar com PIX</h4>
+                        <div class="pix-qr">
+                            <img id="sum_pix_qr" src="" alt="QR Code PIX">
+                        </div>
+                        <p style="font-size: 0.9rem; color: var(--text-main);">Ou utilize a função PIX Copia e Cola:</p>
+                        <div class="pix-copy-group">
+                            <input type="text" id="sum_pix_payload" readonly>
+                            <button class="btn btn-primary" style="width: auto; padding: 0.5rem 1rem;" onclick="app.copyPix()" title="Copiar código PIX">
+                                <i class="ph ph-copy"></i> Copiar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="actions-group">
+                    <button class="btn btn-outline" onclick="app.showScreen('quote')">
+                        <i class="ph ph-arrow-left"></i> Editar
+                    </button>
+                    <button class="btn btn-success" onclick="app.sendToWhatsApp()">
+                        <i class="ph ph-whatsapp-logo" style="font-size: 1.2rem;"></i> Enviar pelo WhatsApp
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, RecaptchaVerifier, signInWithPhoneNumber, signOut } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDzHhk0WqJn02P6w960aDDjKiYPAJmwa0g",
+            authDomain: "orcafacil-55ba3.firebaseapp.com",
+            projectId: "orcafacil-55ba3",
+            storageBucket: "orcafacil-55ba3.firebasestorage.app",
+            messagingSenderId: "250037518988",
+            appId: "1:250037518988:web:185d5a8456645e929831a9"
+        };
+
+        const firebaseApp = initializeApp(firebaseConfig);
+        const auth = getAuth(firebaseApp);
+        const db = getFirestore(firebaseApp);
+
+        window.app = {
+            config: {
+                name: '',
+                whatsapp: '',
+                color: '#2563eb',
+                logo: '',
+                pixKey: '',
+                pixName: '',
+                pixCity: '',
+                theme: 'light'
+            },
+            
+            init() {
+                this.setupColorPicker();
+                this.setupImageUpload();
+                
+                const loggedUser = localStorage.getItem('orcafacil_user');
+                if(!loggedUser) {
+                    document.getElementById('login-wrapper').style.display = 'flex';
+                } else {
+                    this.startApp();
+                }
+            },
+
+            async loginGoogle() {
+                try {
+                    const provider = new GoogleAuthProvider();
+                    const result = await signInWithPopup(auth, provider);
+                    const user = { type: 'google', name: result.user.displayName, email: result.user.email, uid: result.user.uid };
+                    localStorage.setItem('orcafacil_user', JSON.stringify(user));
+                    this.startApp();
+                } catch(error) {
+                    console.error(error);
+                    alert('Erro no login com Google.');
+                }
+            },
+
+            setupRecaptcha() {
+                if(!window.recaptchaVerifier) {
+                    window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+                        'size': 'normal'
+                    });
+                }
+            },
+
+            async sendSMS() {
+                const phoneInput = document.getElementById('login_phone').value.replace(/\D/g, '');
+                if(phoneInput.length < 10) {
+                    alert('Insira um número válido com DDD.');
+                    return;
+                }
+                const phoneNumber = '+55' + phoneInput;
+                this.setupRecaptcha();
+                
+                try {
+                    const confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, window.recaptchaVerifier);
+                    window.confirmationResult = confirmationResult;
+                    document.getElementById('login-phone-step').style.display = 'none';
+                    document.getElementById('login-otp-step').style.display = 'block';
+                    document.getElementById('recaptcha-container').style.display = 'none';
+                } catch (error) {
+                    console.error(error);
+                    alert('Erro ao enviar SMS. Tente novamente.');
+                }
+            },
+
+            async verifyOTP() {
+                const otp = document.getElementById('login_otp').value;
+                if(otp.length !== 6) {
+                    alert('Código inválido. Digite 6 números.');
+                    return;
+                }
+                try {
+                    const result = await window.confirmationResult.confirm(otp);
+                    const user = { type: 'phone', phone: result.user.phoneNumber, uid: result.user.uid };
+                    localStorage.setItem('orcafacil_user', JSON.stringify(user));
+                    this.startApp();
+                } catch (error) {
+                    console.error(error);
+                    alert('Código incorreto.');
+                }
+            },
+
+            resetLogin() {
+                document.getElementById('login-phone-step').style.display = 'block';
+                document.getElementById('login-otp-step').style.display = 'none';
+                document.getElementById('login_otp').value = '';
+                if(document.getElementById('recaptcha-container')) {
+                    document.getElementById('recaptcha-container').style.display = 'block';
+                }
+            },
+
+            async logout() {
+                try {
+                    await signOut(auth);
+                } catch(e) { console.error(e); }
+                localStorage.removeItem('orcafacil_user');
+                location.reload();
+            },
+
+            startApp() {
+                document.getElementById('login-wrapper').style.display = 'none';
+                document.getElementById('app-wrapper').style.display = 'flex';
+                
+                this.loadConfig();
+                this.applyTheme();
+                
+                if (this.config.name && this.config.whatsapp) {
+                    this.showScreen('quote');
+                    if(document.getElementById('service-list').children.length === 0) {
+                        this.addServiceItem();
+                    }
+                } else {
+                    this.showScreen('config');
+                }
+            },
+
+            loadConfig() {
+                const stored = localStorage.getItem('orcafacil_config');
+                if (stored) {
+                    this.config = JSON.parse(stored);
+                    // Check if theme was saved, otherwise default
+                    this.config.theme = this.config.theme || 'light';
+                    
+                    document.getElementById('c_name').value = this.config.name || '';
+                    document.getElementById('c_whatsapp').value = this.config.whatsapp || '';
+                    document.getElementById('c_color').value = this.config.color || '#2563eb';
+                    document.getElementById('c_color_hex').innerText = this.config.color || '#2563eb';
+                    
+                    document.getElementById('c_pix_key').value = this.config.pixKey || '';
+                    document.getElementById('c_pix_name').value = this.config.pixName || '';
+                    document.getElementById('c_pix_city').value = this.config.pixCity || '';
+                    
+                    if (this.config.logo) {
+                        const preview = document.getElementById('c_logo_preview');
+                        preview.src = this.config.logo;
+                        preview.style.display = 'block';
+                    }
+                }
+            },
+
+            saveConfig() {
+                const name = document.getElementById('c_name').value.trim();
+                const zap = document.getElementById('c_whatsapp').value.replace(/\D/g, '');
+                const color = document.getElementById('c_color').value;
+                const pixKey = document.getElementById('c_pix_key').value.trim();
+                const pixName = document.getElementById('c_pix_name').value.trim();
+                const pixCity = document.getElementById('c_pix_city').value.trim();
+
+                if (!name || !zap) {
+                    alert('Preencha o Nome e o WhatsApp da Empresa.');
+                    return;
+                }
+
+                this.config.name = name;
+                this.config.whatsapp = zap;
+                this.config.color = color;
+                this.config.pixKey = pixKey;
+                this.config.pixName = pixName;
+                this.config.pixCity = pixCity;
+                
+                localStorage.setItem('orcafacil_config', JSON.stringify(this.config));
+                this.applyTheme();
+                
+                if(document.getElementById('service-list').children.length === 0) {
+                    this.addServiceItem();
+                }
+
+                this.showScreen('quote');
+            },
+
+            applyTheme() {
+                // Update primary color
+                document.documentElement.style.setProperty('--primary', this.config.color);
+                
+                // Dark mode toggle
+                if (this.config.theme === 'dark') {
+                    document.body.classList.add('dark');
+                    document.getElementById('theme-icon').classList.replace('ph-moon', 'ph-sun');
+                } else {
+                    document.body.classList.remove('dark');
+                    document.getElementById('theme-icon').classList.replace('ph-sun', 'ph-moon');
+                }
+                
+                // Header displays
+                document.getElementById('app-name').innerText = this.config.name;
+                const topLogo = document.getElementById('app-logo');
+                if (this.config.logo) {
+                    topLogo.src = this.config.logo;
+                    topLogo.style.display = 'block';
+                } else {
+                    topLogo.style.display = 'none';
+                }
+            },
+            
+            toggleTheme() {
+                this.config.theme = this.config.theme === 'dark' ? 'light' : 'dark';
+                this.applyTheme();
+                localStorage.setItem('orcafacil_config', JSON.stringify(this.config));
+            },
+
+            showScreen(screenId) {
+                document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+                document.getElementById('screen-' + screenId).classList.add('active');
+            },
+
+            setupColorPicker() {
+                const picker = document.getElementById('c_color');
+                const hex = document.getElementById('c_color_hex');
+                picker.addEventListener('input', (e) => {
+                    hex.innerText = e.target.value;
+                });
+            },
+
+            setupImageUpload() {
+                const input = document.getElementById('c_logo');
+                const preview = document.getElementById('c_logo_preview');
+
+                input.addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (event) => {
+                            const base64 = event.target.result;
+                            this.config.logo = base64;
+                            preview.src = base64;
+                            preview.style.display = 'block';
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            },
+
+            addServiceItem() {
+                const list = document.getElementById('service-list');
+                const id = 'item_' + Date.now();
+                const html = `
+                    <div class="service-item" id="${id}">
+                        <div class="service-inputs">
+                            <input type="text" class="form-control s-desc" placeholder="Ex: Criação de Site Institucional" required>
+                            <input type="text" class="form-control s-price" placeholder="R$ 0,00" oninput="app.maskCurrency(this)" required>
+                        </div>
+                        <button class="btn-remove" onclick="app.removeServiceItem('${id}')" title="Remover item">
+                            <i class="ph ph-trash" style="font-size: 1.25rem;"></i>
+                        </button>
+                    </div>
+                `;
+                list.insertAdjacentHTML('beforeend', html);
+            },
+
+            removeServiceItem(id) {
+                const elem = document.getElementById(id);
+                if (elem) elem.remove();
+            },
+
+            maskCurrency(input) {
+                let value = input.value.replace(/\D/g, '');
+                if (value === '') value = '0';
+                let numericValue = parseInt(value, 10) / 100;
+                input.value = numericValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            },
+
+            parseCurrency(str) {
+                let val = str.replace(/[R$\s.]/g, '').replace(',', '.');
+                return parseFloat(val) || 0;
+            },
+
+            formatMoney(value) {
+                return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            },
+
+            generateSummary() {
+                const name = document.getElementById('q_name').value.trim();
+                const whatsapp = document.getElementById('q_whatsapp').value.trim();
+                const email = document.getElementById('q_email').value.trim();
+                const notes = document.getElementById('q_notes').value.trim();
+
+                if (!name) {
+                    alert('O nome do cliente é obrigatório.');
+                    return;
+                }
+
+                // Client Info
+                document.getElementById('sum_name').textContent = name;
+                document.getElementById('sum_whatsapp').textContent = whatsapp || 'Não informado';
+                document.getElementById('sum_email').textContent = email || 'Não informado';
+
+                // Items
+                const itemsContainer = document.getElementById('sum_items');
+                itemsContainer.innerHTML = '';
+                
+                let total = 0;
+                let hasValidItems = false;
+
+                document.querySelectorAll('.service-item').forEach(item => {
+                    const desc = item.querySelector('.s-desc').value.trim();
+                    const priceStr = item.querySelector('.s-price').value;
+                    const price = this.parseCurrency(priceStr);
+
+                    if (desc && price > 0) {
+                        hasValidItems = true;
+                        total += price;
+                        itemsContainer.innerHTML += `
+                            <div class="s-item">
+                                <span>${desc}</span>
+                                <strong>${this.formatMoney(price)}</strong>
+                            </div>
+                        `;
+                    }
+                });
+
+                if (!hasValidItems) {
+                    alert('Adicione pelo menos um serviço com valor maior que zero.');
+                    return;
+                }
+
+                // Total
+                document.getElementById('sum_total').textContent = this.formatMoney(total);
+                
+                // Set total back to global state to use in WA sending
+                this.currentTotalStr = this.formatMoney(total);
+
+                // Notes
+                const notesContainer = document.getElementById('sum_notes_container');
+                if (notes) {
+                    document.getElementById('sum_notes').textContent = notes;
+                    notesContainer.style.display = 'block';
+                } else {
+                    notesContainer.style.display = 'none';
+                }
+
+                // PIX
+                const pixContainer = document.getElementById('sum_pix_container');
+                if (this.config.pixKey && this.config.pixName && this.config.pixCity) {
+                    const payload = this.generatePixPayload(this.config.pixKey, this.config.pixName, this.config.pixCity, total);
+                    document.getElementById('sum_pix_payload').value = payload;
+                    document.getElementById('sum_pix_qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(payload)}`;
+                    pixContainer.style.display = 'block';
+                    this.currentPixPayload = payload;
+                } else {
+                    pixContainer.style.display = 'none';
+                    this.currentPixPayload = '';
+                }
+
+                this.showScreen('summary');
+            },
+
+            copyPix() {
+                const input = document.getElementById('sum_pix_payload');
+                input.select();
+                input.setSelectionRange(0, 99999);
+                navigator.clipboard.writeText(input.value).then(() => {
+                    alert('Código PIX copiado para a área de transferência!');
+                }).catch(() => {
+                    alert('Erro ao copiar código PIX.');
+                });
+            },
+
+            generatePixPayload(pixKey, merchantName, merchantCity, amount) {
+                function crc16(payload) {
+                    let polynomial = 0x1021;
+                    let result = 0xFFFF;
+                    for (let i = 0; i < payload.length; i++) {
+                        result ^= (payload.charCodeAt(i) << 8);
+                        for (let j = 0; j < 8; j++) {
+                            if ((result & 0x8000) !== 0) {
+                                result = ((result << 1) ^ polynomial) & 0xFFFF;
+                            } else {
+                                result = (result << 1) & 0xFFFF;
+                            }
+                        }
+                    }
+                    return result.toString(16).toUpperCase().padStart(4, '0');
+                }
+
+                function formatF(id, val) {
+                    let vStr = val.toString();
+                    return id + vStr.length.toString().padStart(2, '0') + vStr;
+                }
+
+                let payloadKey = formatF("00", "br.gov.bcb.pix") + formatF("01", pixKey);
+                
+                let p = formatF("00", "01") + 
+                        formatF("01", "11") + 
+                        formatF("26", payloadKey) + 
+                        formatF("52", "0000") + 
+                        formatF("53", "986");
+                        
+                if (amount > 0) {
+                    p += formatF("54", amount.toFixed(2));
+                }
+                
+                let safeName = merchantName.substring(0, 25).replace(/[^a-zA-Z0-9 ]/g, "").trim();
+                let safeCity = merchantCity.substring(0, 15).replace(/[^a-zA-Z0-9 ]/g, "").trim();
+                
+                p += formatF("58", "BR") + 
+                     formatF("59", safeName) + 
+                     formatF("60", safeCity);
+                     
+                p += formatF("62", formatF("05", "***"));
+                p += "6304";
+                p += crc16(p);
+                
+                return p;
+            },
+
+            async saveBudgetToFirestore(budgetData) {
+                try {
+                    await addDoc(collection(db, "orcamentos"), {
+                        ...budgetData,
+                        createdAt: serverTimestamp()
+                    });
+                    console.log('Orçamento salvo no Firebase com sucesso!');
+                } catch(e) {
+                    console.error('Erro ao salvar orçamento:', e);
+                }
+            },
+
+            async sendToWhatsApp() {
+                const c_name = document.getElementById('q_name').value.trim();
+                const c_zap = document.getElementById('q_whatsapp').value.trim();
+                const c_email = document.getElementById('q_email').value.trim();
+                const notes = document.getElementById('q_notes').value.trim();
+
+                let msg = `*Novo Orçamento - ${this.config.name}*\n\n`;
+                msg += `*Cliente:* ${c_name}\n`;
+                if(c_zap) msg += `*WhatsApp:* ${c_zap}\n`;
+                if(c_email) msg += `*E-mail:* ${c_email}\n`;
+                
+                msg += `\n*Serviços Desejados:*\n`;
+                
+                const budgetData = {
+                    empresaName: this.config.name,
+                    clienteName: c_name,
+                    clienteWhatsApp: c_zap,
+                    clienteEmail: c_email,
+                    totalStr: this.currentTotalStr,
+                    observacoes: notes,
+                    itens: []
+                };
+
+                document.querySelectorAll('.service-item').forEach(item => {
+                    const desc = item.querySelector('.s-desc').value.trim();
+                    const priceStr = item.querySelector('.s-price').value;
+                    const price = this.parseCurrency(priceStr);
+                    if (desc && price > 0) {
+                        msg += `- ${desc}: ${this.formatMoney(price)}\n`;
+                        budgetData.itens.push({ desc, price });
+                    }
+                });
+
+                if(notes) {
+                    msg += `\n*Observações:*\n_${notes}_\n`;
+                }
+
+                msg += `\n*Total Estimado: ${this.currentTotalStr}*`;
+                
+                if (this.currentPixPayload) {
+                    msg += `\n\n*Pague com PIX Copia e Cola:*\n`;
+                    msg += this.currentPixPayload;
+                    
+                    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(this.currentPixPayload)}`;
+                    msg += `\n\n*Ou acesse o QR Code por este link:*\n${qrUrl}`;
+                }
+
+                // Save to Firestore
+                this.saveBudgetToFirestore(budgetData);
+
+                const companyZap = this.config.whatsapp.replace(/\D/g, '');
+                const url = `https://wa.me/${companyZap}?text=${encodeURIComponent(msg)}`;
+                
+                window.open(url, '_blank');
+            }
+        };
+
+        // Initialize on load
+        window.app.init();
+    </script>
+</body>
+</html>
