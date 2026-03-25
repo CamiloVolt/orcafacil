@@ -1260,13 +1260,20 @@
                 }
                 
                 let safeKey = pixKey.trim();
+                let justNums = safeKey.replace(/\D/g, '');
                 
-                // Remove espaços do telefone se houver
-                if (/^\(?\d{2}\)?\s*9?\d{4}-?\d{4}$/.test(safeKey)) {
-                    let pNum = safeKey.replace(/\D/g, '');
-                    if (pNum.length === 10 || pNum.length === 11) {
-                        safeKey = '+55' + pNum;
+                // Formatação robusta de telefone vs outras chaves
+                if (justNums.length === 13 && justNums.startsWith('55')) {
+                    // É um telefone com DDI que faltou o "+"
+                    safeKey = '+' + justNums;
+                } else if (/^\(?\d{2}\)?\s*9?\d{4}-?\d{4}$/.test(safeKey)) {
+                    // Telefone sem DDI
+                    if (justNums.length === 10 || justNums.length === 11) {
+                        safeKey = '+55' + justNums;
                     }
+                } else {
+                    // Outras chaves (Email, CPF, Aleatório) só remove espaços vazios
+                    safeKey = safeKey.replace(/\s+/g, '');
                 }
 
                 let payloadKey = formatF("00", "br.gov.bcb.pix") + formatF("01", safeKey);
