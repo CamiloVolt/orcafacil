@@ -737,7 +737,8 @@
                 
                 <div class="form-group">
                     <label for="c_pix_key">Chave PIX</label>
-                    <input type="text" id="c_pix_key" class="form-control" placeholder="CNPJ, CPF, Celular, Email ou Aleatória">
+                    <input type="text" id="c_pix_key" class="form-control" placeholder="CNPJ, CPF ou Celular">
+                    <small style="color: var(--text-muted); margin-top: 0.25rem; display: block;">Se for celular, coloque o +55 (Ex: +5511999999999)</small>
                 </div>
                 
                 <div class="config-row">
@@ -1257,11 +1258,20 @@
                     let vStr = val.toString();
                     return id + vStr.length.toString().padStart(2, '0') + vStr;
                 }
+                
+                let safeKey = pixKey.trim();
+                
+                // Remove espaços do telefone se houver
+                if (/^\(?\d{2}\)?\s*9?\d{4}-?\d{4}$/.test(safeKey)) {
+                    let pNum = safeKey.replace(/\D/g, '');
+                    if (pNum.length === 10 || pNum.length === 11) {
+                        safeKey = '+55' + pNum;
+                    }
+                }
 
-                let payloadKey = formatF("00", "br.gov.bcb.pix") + formatF("01", pixKey);
+                let payloadKey = formatF("00", "br.gov.bcb.pix") + formatF("01", safeKey);
                 
                 let p = formatF("00", "01") + 
-                        formatF("01", "11") + 
                         formatF("26", payloadKey) + 
                         formatF("52", "0000") + 
                         formatF("53", "986");
@@ -1270,8 +1280,11 @@
                     p += formatF("54", amount.toFixed(2));
                 }
                 
-                let safeName = merchantName.substring(0, 25).replace(/[^a-zA-Z0-9 ]/g, "").trim();
-                let safeCity = merchantCity.substring(0, 15).replace(/[^a-zA-Z0-9 ]/g, "").trim();
+                let safeName = merchantName.replace(/[^a-zA-Z0-9 ]/g, "").trim().substring(0, 25);
+                let safeCity = merchantCity.replace(/[^a-zA-Z0-9 ]/g, "").trim().substring(0, 15);
+                
+                if (!safeName) safeName = 'Vendedor';
+                if (!safeCity) safeCity = 'Cidade';
                 
                 p += formatF("58", "BR") + 
                      formatF("59", safeName) + 
