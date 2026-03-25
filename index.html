@@ -1322,7 +1322,10 @@
                 // Save to Firestore
                 this.saveBudgetToFirestore(budgetData);
 
-                const companyZap = this.config.whatsapp.replace(/\D/g, '');
+                let companyZap = this.config.whatsapp.replace(/\D/g, '');
+                if (!companyZap.startsWith('55') || companyZap.length <= 11) {
+                    companyZap = '55' + companyZap;
+                }
                 const url = `https://wa.me/${companyZap}?text=${encodeURIComponent(msg)}`;
                 
                 window.open(url, '_blank');
