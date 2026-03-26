@@ -863,8 +863,8 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup, RecaptchaVerifier, signInWithPhoneNumber, signOut } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, RecaptchaVerifier, signInWithPhoneNumber, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, serverTimestamp, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDzHhk0WqJn02P6w960aDDjKiYPAJmwa0g",
@@ -895,21 +895,29 @@
                 this.setupColorPicker();
                 this.setupImageUpload();
                 
-                const loggedUser = localStorage.getItem('orcafacil_user');
-                if(!loggedUser) {
-                    document.getElementById('login-wrapper').style.display = 'flex';
-                } else {
-                    this.startApp();
-                }
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        this.currentUser = user;
+                        // Mantém compatibilidade leve caso plugins procurem o usuário genericamente
+                        localStorage.setItem('orcafacil_user', JSON.stringify({ uid: user.uid, phone: user.phoneNumber, email: user.email }));
+                        
+                        document.getElementById('login-wrapper').style.display = 'none';
+                        await this.loadConfig();
+                        this.startApp();
+                    } else {
+                        this.currentUser = null;
+                        localStorage.removeItem('orcafacil_user');
+                        document.getElementById('login-wrapper').style.display = 'flex';
+                        document.getElementById('app-wrapper').style.display = 'none';
+                    }
+                });
             },
 
             async loginGoogle() {
                 try {
                     const provider = new GoogleAuthProvider();
-                    const result = await signInWithPopup(auth, provider);
-                    const user = { type: 'google', name: result.user.displayName, email: result.user.email, uid: result.user.uid };
-                    localStorage.setItem('orcafacil_user', JSON.stringify(user));
-                    this.startApp();
+                    await signInWithPopup(auth, provider);
+                    // onAuthStateChanged assume o controle
                 } catch(error) {
                     console.error(error);
                     alert('Erro no login com Google.');
@@ -952,10 +960,8 @@
                     return;
                 }
                 try {
-                    const result = await window.confirmationResult.confirm(otp);
-                    const user = { type: 'phone', phone: result.user.phoneNumber, uid: result.user.uid };
-                    localStorage.setItem('orcafacil_user', JSON.stringify(user));
-                    this.startApp();
+                    await window.confirmationResult.confirm(otp);
+                    // onAuthStateChanged assume o controle
                 } catch (error) {
                     console.error(error);
                     alert('Código incorreto.');
@@ -973,8 +979,12 @@
 
             async logout() {
                 try {
+                    if(this.currentUser) {
+                        localStorage.removeItem(`orcafacil_config_${this.currentUser.uid}`);
+                    }
                     await signOut(auth);
                 } catch(e) { console.error(e); }
+                
                 localStorage.removeItem('orcafacil_user');
                 location.reload();
             },
@@ -983,7 +993,6 @@
                 document.getElementById('login-wrapper').style.display = 'none';
                 document.getElementById('app-wrapper').style.display = 'flex';
                 
-                this.loadConfig();
                 this.applyTheme();
                 
                 if (this.config.name && this.config.whatsapp) {
@@ -996,31 +1005,54 @@
                 }
             },
 
-            loadConfig() {
-                const stored = localStorage.getItem('orcafacil_config');
-                if (stored) {
-                    this.config = JSON.parse(stored);
-                    // Check if theme was saved, otherwise default
-                    this.config.theme = this.config.theme || 'light';
-                    
-                    document.getElementById('c_name').value = this.config.name || '';
-                    document.getElementById('c_whatsapp').value = this.config.whatsapp || '';
-                    document.getElementById('c_color').value = this.config.color || '#2563eb';
-                    document.getElementById('c_color_hex').innerText = this.config.color || '#2563eb';
-                    
-                    document.getElementById('c_pix_key').value = this.config.pixKey || '';
-                    document.getElementById('c_pix_name').value = this.config.pixName || '';
-                    document.getElementById('c_pix_city').value = this.config.pixCity || '';
-                    
-                    if (this.config.logo) {
-                        const preview = document.getElementById('c_logo_preview');
-                        preview.src = this.config.logo;
-                        preview.style.display = 'block';
+            async loadConfig() {
+                if(!this.currentUser) return;
+                
+                try {
+                    const userDoc = await getDoc(doc(db, "users", this.currentUser.uid));
+                    if (userDoc.exists()) {
+                        this.config = userDoc.data();
+                        localStorage.setItem(`orcafacil_config_${this.currentUser.uid}`, JSON.stringify(this.config));
+                    } else {
+                        // Usuário novo = configuração zerada
+                        this.config = { name: '', whatsapp: '', color: '#2563eb', logo: '', pixKey: '', pixName: '', pixCity: '', theme: 'light' };
+                        localStorage.removeItem(`orcafacil_config_${this.currentUser.uid}`);
                     }
+                } catch(e) {
+                    console.error('Erro ao puxar config do Firebase:', e);
+                    const stored = localStorage.getItem(`orcafacil_config_${this.currentUser.uid}`);
+                    if (stored) {
+                        this.config = JSON.parse(stored);
+                    } else {
+                        this.config = { name: '', whatsapp: '', color: '#2563eb', logo: '', pixKey: '', pixName: '', pixCity: '', theme: 'light' };
+                    }
+                }
+
+                // Atualizar inputs da View
+                this.config.theme = this.config.theme || 'light';
+                
+                document.getElementById('c_name').value = this.config.name || '';
+                document.getElementById('c_whatsapp').value = this.config.whatsapp || '';
+                document.getElementById('c_color').value = this.config.color || '#2563eb';
+                document.getElementById('c_color_hex').innerText = this.config.color || '#2563eb';
+                
+                document.getElementById('c_pix_key').value = this.config.pixKey || '';
+                document.getElementById('c_pix_name').value = this.config.pixName || '';
+                document.getElementById('c_pix_city').value = this.config.pixCity || '';
+                
+                const preview = document.getElementById('c_logo_preview');
+                if (this.config.logo) {
+                    preview.src = this.config.logo;
+                    preview.style.display = 'block';
+                } else {
+                    preview.src = '';
+                    preview.style.display = 'none';
+                    // Reset input file visually
+                    document.getElementById('c_logo').value = '';
                 }
             },
 
-            saveConfig() {
+            async saveConfig() {
                 const name = document.getElementById('c_name').value.trim();
                 const zap = document.getElementById('c_whatsapp').value.replace(/\D/g, '');
                 const color = document.getElementById('c_color').value;
@@ -1040,7 +1072,15 @@
                 this.config.pixName = pixName;
                 this.config.pixCity = pixCity;
                 
-                localStorage.setItem('orcafacil_config', JSON.stringify(this.config));
+                if (this.currentUser) {
+                    localStorage.setItem(`orcafacil_config_${this.currentUser.uid}`, JSON.stringify(this.config));
+                    try {
+                        await setDoc(doc(db, "users", this.currentUser.uid), this.config);
+                    } catch(e) {
+                        console.error('Erro ao salvar no Firestore:', e);
+                    }
+                }
+                
                 this.applyTheme();
                 
                 if(document.getElementById('service-list').children.length === 0) {
