@@ -469,6 +469,37 @@
             transform: scale(1.15);
         }
 
+        /* Background Swimming Orca */
+        .bg-swimming-orca {
+            position: fixed;
+            bottom: 8%;
+            left: -100px;
+            width: 70px;
+            opacity: 0.5;
+            z-index: 0;
+            pointer-events: none;
+            animation: swim-loop 35s linear infinite;
+        }
+
+        .bg-swimming-orca svg {
+            width: 100%;
+            height: auto;
+            animation: swim-bob 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes swim-bob {
+            0% { transform: translateY(0) rotate(-2deg); }
+            100% { transform: translateY(-15px) rotate(2deg); }
+        }
+
+        @keyframes swim-loop {
+            0% { left: -100px; transform: scaleX(1); }
+            49.9% { left: calc(100vw + 20px); transform: scaleX(1); }
+            50% { left: calc(100vw + 20px); transform: scaleX(-1); }
+            99.9% { left: -100px; transform: scaleX(-1); }
+            100% { left: -100px; transform: scaleX(1); }
+        }
+
         /* Bubble Particle Effect */
         .bubble-particle {
             position: fixed;
@@ -633,6 +664,21 @@
     </style>
 </head>
 <body>
+
+    <!-- Orca Background Animation -->
+    <div class="bg-swimming-orca">
+        <svg viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 10,50 Q 0,35 15,45 Q 0,65 10,50 Z" fill="#1a1a2e"/>
+            <path d="M 15,50 Q 30,20 80,30 Q 110,40 100,60 Q 80,80 30,70 Q 15,65 15,50 Z" fill="#1a1a2e"/>
+            <path d="M 35,62 Q 60,80 95,55 Q 80,70 35,62 Z" fill="#ffffff"/>
+            <path d="M 75,35 Q 85,25 95,30 Q 85,40 75,35 Z" fill="#ffffff"/>
+            <path d="M 50,30 Q 60,5 65,30 Z" fill="#1a1a2e"/>
+            <path d="M 60,65 Q 50,85 70,70 Z" fill="#1a1a2e"/>
+            <circle cx="82" cy="45" r="4" fill="#ffffff"/>
+            <circle cx="83" cy="45" r="2" fill="#1a1a2e"/>
+            <path d="M 90,54 Q 95,59 102,53" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+    </div>
 
     <div id="login-wrapper" class="login-wrapper" style="display: none;">
         <div class="login-card">
